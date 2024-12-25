@@ -69,9 +69,9 @@ class SecantMethod:
 
 
 secant_solver = SecantMethod(
-        equation="x**5 - x - 1",
-        x0=0,
-        x1=1.15,
+        equation="x**3- 5*x**2+3*x-1",
+        x0=-8,
+        x1=7,
         max_iterations=100,
     significant_figures=12
 )

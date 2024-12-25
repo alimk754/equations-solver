@@ -44,7 +44,9 @@ class RegulaFalsePosition:
             return
             
         if equ.subs(self.x, a) > 0:
-            a, b = b, a
+            tmp = sp.N(b, self.precision)
+            b = sp.N(a, self.precision)
+            a = tmp
             
         prev = 0
         
@@ -52,13 +54,13 @@ class RegulaFalsePosition:
             raise Exception("the function is not continuous at the given range")
             
         while iter_count >= 0:
-            iter_count -= 1
+            
             mid = self.formula_calc(equ, a, b)
             
             if self.check_validity(equ.subs(self.x, mid)):
                 raise Exception("the function is not continuous at the given range")
                 
-            if equ.subs(self.x, a) * equ.subs(self.x, b) > 1:
+            if equ.subs(self.x, a) * equ.subs(self.x, b) > 0:
                 raise Exception("this equation cannot be solved by the False Position method")
                 
             if equ.subs(self.x, mid) == 0:
@@ -94,8 +96,9 @@ class RegulaFalsePosition:
                 
             prev = mid
             
-        if self.max_iter == 0:
+        if iter_count == 0:
             raise Exception("method didn't converge")
+        iter_count -= 1
     
     def final_result(self, equ, a, b):
         generator = self.false_position(equ, a, b)

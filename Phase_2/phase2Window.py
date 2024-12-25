@@ -1,4 +1,4 @@
-import sys
+import sys,time
 
 from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QLabel, QLineEdit, QComboBox, QPushButton,
@@ -276,40 +276,51 @@ class Phase2Window(QMainWindow):
         try:
             if method == "Bisection":
                 solver = Bisection(self.precision_spin.value(), self.eps_input.value(), self.max_iter_spin.value())
+                start = time.time()
                 ans = solver.final_result(equation, self.a_input.value(), self.b_input.value())
-                self.result_label.setText(f"found root = {ans}")
+                end = time.time()
+                self.result_label.setText(f"found root = {ans} and time taken {end-start}")
 
             elif method == "False-Position":
                 solver = RegulaFalsePosition(self.precision_spin.value(), self.eps_input.value(), self.max_iter_spin.value())
+                start = time.time()
                 ans = solver.final_result(equation, self.a_input.value(), self.b_input.value())
-                self.result_label.setText(f"found root = {ans}")
-
+                end = time.time()
+                self.result_label.setText(f"found root = {ans} and time taken {end-start}")
             elif method == "Fixed Point":
                 gxsim = simplify(gxf)
+                start = time.time()
                 solver = FixedPointIteration(self.precision_spin.value(), self.eps_input.value(), self.max_iter_spin.value())
                 ans = solver.final_result(gxsim, self.a_input.value())
-                self.result_label.setText(f"found root = {ans}")
+                end = time.time()
+                self.result_label.setText(f"found root = {ans} and time taken {end-start}")
 
             elif method == "Newton-Raphson":
                 solver = StandardNewton(equation, self.precision_spin.value())
+                start = time.time()
                 ans = solver.find_root(self.a_input.value(), self.eps_input.value(), self.max_iter_spin.value())
-                self.result_label.setText(f"found root = {ans}")
+                end = time.time()
+                self.result_label.setText(f"found root = {ans} and time taken {end-start}")
 
             elif method == "Modified 1 Newton-Raphson":
                 solver = Modified1Newton(equation, self.precision_spin.value())
+                start = time.time()
                 ans = solver.find_root(self.a_input.value(), self.b_input.value(),
                                           self.eps_input.value(), self.max_iter_spin.value())
-                self.result_label.setText(f"found root = {ans}")
+                end = time.time()
+                self.result_label.setText(f"found root = {ans} and time taken {end-start}")
 
             elif method == "Modified 2 Newton-Raphson":
                 solver = Modified2Newton(equation, self.precision_spin.value())
+                start = time.time()
                 ans = solver.find_root(self.a_input.value(), self.eps_input.value(), self.max_iter_spin.value())
-                self.result_label.setText(f"found root = {ans}")
+                end = time.time()
+                self.result_label.setText(f"found root = {ans} and time taken {end-start}")
 
             elif method == "Secant Method":
                 solver = SecantMethod(equation, self.a_input.value(),self.b_input.value(),self.eps_input.value(),self.precision_spin.value(),self.max_iter_spin.value())
                 res=solver.get_root() 
-                self.result_label.setText(f"found root = {res['root']}")
+                self.result_label.setText(f"found root = {res['root']} and time taken {res['excution_time']}")
 
         except Exception as e:
             self.result_label.setText(f"Error solving function: {str(e)}")
@@ -328,7 +339,7 @@ class Phase2Window(QMainWindow):
     
         elif method == "Fixed Point":
             gx = self.gx.text().replace("^", "**")
-            input_equation = self.equation_input.text().replace("^", "**")
+           
             gxsim = simplify(gx)
             solver = FixedPointIteration(self.precision_spin.value(), self.eps_input.value(), self.max_iter_spin.value())
             generator = solver.fixed_point_iteration(gxsim, self.a_input.value())
