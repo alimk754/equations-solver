@@ -14,6 +14,8 @@ from RegulaFalseMethod import RegulaFalsePosition
 from modified_1_newton import Modified1Newton
 from modified_2_newton import Modified2Newton
 from standard_newton import StandardNewton
+from Secant import SecantMethod
+from step import GeneratorWindow
 
 
 class Phase2Window(QMainWindow):
@@ -304,17 +306,49 @@ class Phase2Window(QMainWindow):
                 ans = solver.find_root(self.a_input.value(), self.eps_input.value(), self.max_iter_spin.value())
                 self.result_label.setText(f"found root = {ans}")
 
-            # elif method == "Secant Method":
-            #     solver = Secant(equation, epsilon, max_iterations)
-            #     iterations = solver.solve(self.a_input.value(), self.b_input.value())
+            elif method == "Secant Method":
+                solver = SecantMethod(equation, self.a_input.value(),self.b_input.value(),self.eps_input.value(),self.precision_spin.value(),self.max_iter_spin.value())
+                res=solver.get_root() 
+                self.result_label.setText(f"found root = {res['root']}")
 
         except Exception as e:
             self.result_label.setText(f"Error solving function: {str(e)}")
 
 
     def step_mode(self):
-        # TODO: Implement step-by-step visualization
-        pass
+        method = self.method_combo.currentText()
+    
+        if method == "Bisection":
+            solver = Bisection(self.precision_spin.value(), self.eps_input.value(), self.max_iter_spin.value())
+            generator = solver.bisection(equation, self.a_input.value(), self.b_input.value())
+    
+        elif method == "False-Position":
+            solver = RegulaFalsePosition(self.precision_spin.value(), self.eps_input.value(), self.max_iter_spin.value())
+            generator = solver.false_position(equation, self.a_input.value(), self.b_input.value())
+    
+        elif method == "Fixed Point":
+            gx = self.gx.text().replace("^", "**")
+            input_equation = self.equation_input.text().replace("^", "**")
+            gxsim = simplify(gx)
+            solver = FixedPointIteration(self.precision_spin.value(), self.eps_input.value(), self.max_iter_spin.value())
+            generator = solver.fixed_point_iteration(gxsim, self.a_input.value())
+        elif method == "Newton-Raphson":
+            solver = StandardNewton(equation, self.precision_spin.value())
+            generator = solver.iter_steps(self.a_input.value(), self.eps_input.value(), self.max_iter_spin.value())
+                
+        elif method == "Modified 1 Newton-Raphson":
+            solver = Modified1Newton(equation, self.precision_spin.value())
+            generator = solver.iter_steps(self.a_input.value(), self.b_input.value(),
+                                          self.eps_input.value(), self.max_iter_spin.value())
+                
+
+        elif method == "Modified 2 Newton-Raphson":
+            solver = Modified2Newton(equation, self.precision_spin.value())
+            generator = solver.iter_steps(self.a_input.value(), self.eps_input.value(), self.max_iter_spin.value())
+    
+    
+        self.step_window = GeneratorWindow(generator,self.precision_spin.value())
+        self.step_window.show()  
 
     def update_input_fields(self, method):
         # Update input fields based on selected method
