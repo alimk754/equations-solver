@@ -19,7 +19,7 @@ class FixedPointIteration:
         iter_count = self.max_iter
         start_point = sp.N(start_point, self.precision)
         root = start_point
-        diff = sp.N(sp.diff(equ), self.precision)
+        diff = sp.diff(equ)
         
         while iter_count >= 0:
             if diff.subs(self.x, root) > 1:
@@ -65,8 +65,8 @@ class FixedPointIteration:
         return final_result
 
 def main():
-    solver = FixedPointIterationMethod(precision=6)
-    equation = "((2*x+3)**0.5)/x"
+    solver = FixedPointIteration(precision=6)
+    equation = "exp(-x)-x"
     equation = sp.N(sp.sympify(equation), solver.precision)
     
     generator = solver.fixed_point_iteration(equation, 4)

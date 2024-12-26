@@ -47,16 +47,16 @@ class RegulaFalsePosition:
             tmp = sp.N(b, self.precision)
             b = sp.N(a, self.precision)
             a = tmp
-            
+        print(a,b)    
         prev = 0
         
         if self.check_validity(equ.subs(self.x, a)) or self.check_validity(equ.subs(self.x, b)):
             raise Exception("the function is not continuous at the given range")
             
         while iter_count >= 0:
-            
+            iter_count -= 1
             mid = self.formula_calc(equ, a, b)
-            
+            print(mid)
             if self.check_validity(equ.subs(self.x, mid)):
                 raise Exception("the function is not continuous at the given range")
                 
@@ -91,14 +91,15 @@ class RegulaFalsePosition:
                 "relativeError": relative
             }
             
+            if self.relative_error(prev, mid) < self.tol and equ.subs(self.x,mid)!=0:
+                raise Exception("cannot be solved")
             if self.relative_error(prev, mid) < self.tol:
-                break
-                
+                break 
             prev = mid
             
         if iter_count == 0:
             raise Exception("method didn't converge")
-        iter_count -= 1
+
     
     def final_result(self, equ, a, b):
         generator = self.false_position(equ, a, b)
@@ -108,19 +109,19 @@ class RegulaFalsePosition:
         return final_result
 
 def main():
-    solver = FalsePositionMethod()
+    solver = RegulaFalsePosition()
     x = sp.symbols('x')
-    equation = sp.N(sp.sympify("x**2+6*x+4"), solver.precision)
+    equation = sp.N(sp.sympify("exp(-x)-x"), solver.precision)
     g = equation - x
     
-    generator = solver.false_position(g, -2, 5)
+    generator = solver.false_position(g, -24, 5)
     for i in generator:
         print(i["iteration"])
         print(i["oldRoot"])
         print(i["newRoot"])
         print(i["relativeError"])
         print("--------------------------------")
-    print(solver.final_result(g,-2,5))    
+    print(solver.final_result(g,-24,5))    
 
 if __name__ == "__main__":
     main()
