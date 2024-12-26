@@ -91,7 +91,7 @@ class RegulaFalsePosition:
                 "relativeError": relative
             }
             
-            if self.relative_error(prev, mid) < self.tol and equ.subs(self.x,mid)!=0:
+            if self.relative_error(prev, mid) < self.tol and equ.subs(self.x,mid)>1e-1:
                 raise Exception("cannot be solved")
             if self.relative_error(prev, mid) < self.tol:
                 break 
